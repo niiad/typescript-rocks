@@ -96,3 +96,33 @@ function gettingLength<T extends HasLength>(arg: T): number {
 
 console.log(getLength<number>(22));
 console.log(gettingLength<string>("Hello!"));
+
+// promise
+const myPromise = new Promise((resolve, reject) => {
+	setTimeout(() => {
+		// resolve("I've completed successfully");
+		reject("I've failed");
+	}, 500);
+});
+
+myPromise
+	.then((done) => {
+		console.log("done");
+	})
+	.catch((err) => {
+		console.log(err);
+	});
+
+// await and async
+async function delayedResult() {
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			resolve("I've completed successfully");
+		}, 500);
+	});
+}
+
+(async function execAsyncFunc() {
+	const result = await delayedResult();
+	console.log(result);
+})();
