@@ -1,15 +1,23 @@
 import { TodoItem } from "./todoItem";
 
+type ItemCounts = {
+	total: number;
+	incomplete: number;
+};
+
 export class TodoCollection {
 	private nextId: number = 1;
+	private itemMap: Map<number, TodoItem> = new Map<number, TodoItem>();
 
 	public constructor(
 		public username: string,
 		public todoItems: TodoItem[] = []
-	) {}
+	) {
+		todoItems.forEach((item) => this.itemMap.set(item.id, item));
+	}
 
-	private getTodoById(id: number): TodoItem {
-		return this.todoItems.find((item) => item.id === id);
+	public getTodoById(id: number): TodoItem {
+		return this.itemMap.get(id);
 	}
 
 	public addTodo(task: string): number {
@@ -17,7 +25,7 @@ export class TodoCollection {
 			this.nextId++;
 		}
 
-		this.todoItems.push(new TodoItem(this.nextId, task));
+		this.itemMap.set(this.nextId, new TodoItem(this.nextId, task));
 
 		return this.nextId;
 	}
@@ -28,5 +36,26 @@ export class TodoCollection {
 		if (todoItem) {
 			todoItem.complete = complete;
 		}
+	}
+
+	public getTodoItems(includeComplete: boolean): TodoItem[] {
+		return [...this.itemMap.values()].filter(
+			(item) => includeComplete || !item.complete
+		);
+	}
+
+	public removeComplete(): void {
+		this.itemMap.forEach((item) => {
+			if (item.complete) {
+				this.itemMap.delete(item.id);
+			}
+		});
+	}
+
+	public getItemCounts(): ItemCounts {
+		return {
+			total: this.itemMap.size,
+			incomplete: this.getTodoItems(false).length,
+		};
 	}
 }
