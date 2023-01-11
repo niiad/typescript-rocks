@@ -36,3 +36,63 @@ let [, , three] = names;
 
 let prices: number[] = [100, 120, 50.25, 75];
 let [, ...highest] = prices.sort((a, b) => a - b);
+
+// function as types
+type Run = (miles: number) => boolean;
+
+let runner: Run = function (miles: number): boolean {
+	if (miles > 10) {
+		return true;
+	}
+
+	return false;
+};
+
+// getters and setters
+class Speaker {
+	private message: string;
+
+	public constructor(private name: string) {}
+
+	get Message(): string {
+		if (!this.message.includes(this.name)) {
+			throw Error("message is missing speaker's name");
+		}
+
+		return this.message;
+	}
+
+	set Message(value: string) {
+		let temp: string = value;
+
+		if (!value.includes(this.name)) {
+			temp = this.name + " " + value;
+		}
+
+		this.message = temp;
+	}
+}
+
+const speaker = new Speaker("John Doe");
+speaker.Message = "Hello!";
+console.log(speaker.Message);
+
+// generics
+function getLength<T>(arg: T): number {
+	if (arg.hasOwnProperty("length")) {
+		return arg["length"];
+	}
+
+	return 0;
+}
+
+interface HasLength {
+	length: number;
+}
+
+function gettingLength<T extends HasLength>(arg: T): number {
+	return arg.length;
+}
+
+console.log(getLength<number>(22));
+console.log(gettingLength<string>("Hello!"));
